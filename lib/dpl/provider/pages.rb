@@ -48,6 +48,7 @@ module DPL
         @gh_name = "#{options[:name] || 'Deployment Bot'} (from Travis CI)"
 
         @gh_ref = "#{@gh_url}/#{slug}.git"
+        @gh_api_url = options[:github_url] ? "https://#{@gh_url}/api/v3/" : "https://api.github.ibm/""
         @gh_remote_url = "https://#{@gh_token}@#{@gh_ref}"
         @git_push_opts = @keep_history ? '' : ' --force'
         @git_commit_opts = (@allow_empty_commit and @keep_history) ? ' --allow-empty' : ''
@@ -83,7 +84,7 @@ module DPL
       def api  # Borrowed from Releases provider
         error 'gh-token must be provided for Pages provider to work.' unless @gh_token
 
-        @api ||= Octokit::Client.new(:access_token => @gh_token)
+        @api ||= Octokit::Client.new(:access_token => @gh_token, :api_endpoint => @gh_api_url)
       end
 
       def user
